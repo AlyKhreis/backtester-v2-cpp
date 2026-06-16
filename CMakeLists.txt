@@ -8,4 +8,9 @@ include_directories(src)
 add_executable(backtester
         main.cpp
         src/data_handler.cpp
+        src/strategy.h
+        src/ma_crossover.cpp
+        src/ma_crossover.h
+        src/portfolio.cpp
+        src/portfolio.h
 )
