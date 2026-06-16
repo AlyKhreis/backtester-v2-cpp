@@ -13,4 +13,6 @@ add_executable(backtester
         src/ma_crossover.h
         src/portfolio.cpp
         src/portfolio.h
+        src/execution_handler.cpp
+        src/execution_handler.h
 )
