@@ -15,4 +15,6 @@ add_executable(backtester
         src/portfolio.h
         src/execution_handler.cpp
         src/execution_handler.h
+        src/engine.cpp
+        src/engine.h
 )
