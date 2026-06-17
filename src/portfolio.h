@@ -9,6 +9,19 @@
 #include "data_handler.h"
 #include <iostream>
 
+
+
+struct Trade {
+    std::string symbol;
+    std::string entry_date;
+    std::string exit_date;
+    double entry_price;
+    double exit_price;
+    int quantity;
+    double pnl;           // (exit - entry) * qty - total_commission
+    double total_commission;
+};
+
 class Portfolio {
 public:
     Portfolio(DataHandler* data,
@@ -18,7 +31,9 @@ public:
           events_(events),
           initial_cash_(initial_cash),
           current_cash_(initial_cash) {}
+    const std::vector<Trade>& get_trade_log() const { return trade_log_; }
     const std::vector<double>& get_equity_curve() const { return equity_curve_; }
+    
     virtual void on_signal(const SignalEvent& event) = 0;
     virtual void on_fill(const FillEvent& event) = 0;
     virtual void update_timeindex() = 0;
@@ -32,6 +47,9 @@ protected:
     double current_cash_;
     std::unordered_map<std::string, int> positions_;
     std::vector<double> equity_curve_;
+
+    std::vector<Trade> trade_log_;
+    std::unordered_map<std::string, Trade> open_trades_;
 };
 
 
@@ -61,4 +79,6 @@ public:
 private:
     double risk_per_trade_;
 };
+
+
 #endif

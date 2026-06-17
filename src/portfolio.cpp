@@ -26,9 +26,27 @@ void NaivePortfolio::on_fill(const FillEvent& event) {
     if (event.direction == "BUY") {
         positions_[event.symbol] += event.quantity;
         current_cash_ -= event.quantity * event.fill_price + event.commission;
-    }else {
+
+        Trade t;
+        t.symbol = event.symbol;
+        t.entry_date = data_->get_latest_bar(event.symbol).date;
+        t.entry_price = event.fill_price;
+        t.quantity = event.quantity;
+        t.total_commission = event.commission;
+        open_trades_[event.symbol] = t;
+    } else {
         positions_[event.symbol] -= event.quantity;
         current_cash_ += event.quantity * event.fill_price - event.commission;
+
+        if (open_trades_.count(event.symbol)) {
+            Trade& t = open_trades_[event.symbol];
+            t.exit_date = data_->get_latest_bar(event.symbol).date;
+            t.exit_price = event.fill_price;
+            t.total_commission += event.commission;
+            t.pnl = (t.exit_price - t.entry_price) * t.quantity - t.total_commission;
+            trade_log_.push_back(t);
+            open_trades_.erase(event.symbol);
+        }
     }
 }
 
@@ -82,9 +100,27 @@ void FixedFractionalPortfolio::on_fill(const FillEvent& event) {
     if (event.direction == "BUY") {
         positions_[event.symbol] += event.quantity;
         current_cash_ -= event.quantity * event.fill_price + event.commission;
-    }else {
+
+        Trade t;
+        t.symbol = event.symbol;
+        t.entry_date = data_->get_latest_bar(event.symbol).date;
+        t.entry_price = event.fill_price;
+        t.quantity = event.quantity;
+        t.total_commission = event.commission;
+        open_trades_[event.symbol] = t;
+    } else {
         positions_[event.symbol] -= event.quantity;
         current_cash_ += event.quantity * event.fill_price - event.commission;
+
+        if (open_trades_.count(event.symbol)) {
+            Trade& t = open_trades_[event.symbol];
+            t.exit_date = data_->get_latest_bar(event.symbol).date;
+            t.exit_price = event.fill_price;
+            t.total_commission += event.commission;
+            t.pnl = (t.exit_price - t.entry_price) * t.quantity - t.total_commission;
+            trade_log_.push_back(t);
+            open_trades_.erase(event.symbol);
+        }
     }
 }
 

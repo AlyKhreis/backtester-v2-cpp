@@ -10,6 +10,27 @@
 #include "rsi.h"
 #include "momentum.h"
 #include "metrics.h"
+#include <fstream>
+
+
+
+void export_trades_to_csv(const std::vector<Trade>& trades, const std::string& path) {
+    std::ofstream out(path);
+    out << "symbol,entry_date,exit_date,entry_price,exit_price,quantity,pnl,commission\n";
+    for (const auto& t : trades) {
+        out << t.symbol << "," << t.entry_date << "," << t.exit_date << ","
+            << t.entry_price << "," << t.exit_price << "," << t.quantity << ","
+            << t.pnl << "," << t.total_commission << "\n";
+    }
+}
+
+void export_equity_to_csv(const std::vector<double>& curve, const std::string& path) {
+    std::ofstream out(path);
+    out << "bar,equity\n";
+    for (size_t i = 0; i < curve.size(); i++) {
+        out << i << "," << curve[i] << "\n";
+    }
+}
 
 int main() {
     std::queue<std::unique_ptr<Event>> events;
@@ -61,6 +82,12 @@ int main() {
     std::cout << "Sharpe ratio: " << calculate_sharpe(curve) << "\n";
     std::cout << "Max drawdown: " << calculate_max_drawdown(curve) << "%\n";
     std::cout << "CAGR: " << calculate_cagr(curve) * 100 << "%\n";
+
+
+    export_trades_to_csv(portfolio.get_trade_log(), "trades.csv");
+    export_equity_to_csv(curve, "equity.csv");
+    std::cout << "\nExported trades.csv and equity.csv\n";
+    std::cout << "Trades: " << portfolio.get_trade_log().size() << "\n";
 
     delete strategy;
     return 0;
