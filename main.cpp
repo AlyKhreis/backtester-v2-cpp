@@ -3,27 +3,30 @@
 #include <memory>
 #include "event.h"
 #include "data_handler.h"
+#include "ma_crossover.h"
+#include "portfolio.h"
+#include "execution_handler.h"
+#include "engine.h"
 
 int main() {
     std::queue<std::unique_ptr<Event>> events;
 
     HistoricalCSVDataHandler data(&events,
-                                  "/Users/aly/Desktop/CPPProjects/backtester-v2-cpp/data/AAPL.csv",
-                                  "AAPL");
+        "/Users/aly/Desktop/CPPProjects/backtester-v2-cpp/data/AAPL.csv",
+        "AAPL");
 
-    int bar_count = 0;
-    while (data.has_more_data()) {
-        data.update_bars();
+    MovingAverageCrossover strategy(&data, &events, 10, 50, "AAPL");
+    NaivePortfolio portfolio(&data, &events, 100000.0);
+    SimulatedExecutionHandler execution(&data, &events);
 
-        // pop the MarketEvent the handler just pushed
-        auto event = std::move(events.front());
-        events.pop();
+    BacktestEngine engine(&data, &strategy, &execution, &portfolio, &events);
 
-        Bar latest = data.get_latest_bar("AAPL");
-        std::cout << latest.date << "  close: $" << latest.close << "\n";
-        bar_count++;
-    }
+    engine.run();
 
-    std::cout << "\nTotal bars: " << bar_count << "\n";
+    const auto& curve = portfolio.get_equity_curve();
+    std::cout << "Final equity: $" << curve.back() << "\n";
+    std::cout << "Total return: " << (curve.back() / 100000.0 - 1.0) * 100 << "%\n";
+    std::cout << "Bars: " << curve.size() << "\n";
+
     return 0;
 }

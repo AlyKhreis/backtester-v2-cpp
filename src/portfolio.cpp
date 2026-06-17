@@ -2,6 +2,7 @@
 
 
 
+
 void NaivePortfolio::on_signal(const SignalEvent& event){
     auto order = std::make_unique<OrderEvent>();
     order->symbol= event.symbol;
@@ -29,6 +30,9 @@ void NaivePortfolio::on_fill(const FillEvent& event) {
         positions_[event.symbol] -= event.quantity;
         current_cash_ += event.quantity * event.fill_price - event.commission;
     }
+    std::cout << "FILL: " << event.direction << " " << event.quantity
+          << " @ $" << event.fill_price
+          << " cash=$" << current_cash_ << "\n";
 }
 
 void NaivePortfolio::update_timeindex() {

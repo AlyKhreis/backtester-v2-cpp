@@ -7,6 +7,7 @@
 #include <vector>
 #include "event.h"
 #include "data_handler.h"
+#include <iostream>
 
 class Portfolio {
 public:
@@ -17,7 +18,7 @@ public:
           events_(events),
           initial_cash_(initial_cash),
           current_cash_(initial_cash) {}
-
+    const std::vector<double>& get_equity_curve() const { return equity_curve_; }
     virtual void on_signal(const SignalEvent& event) = 0;
     virtual void on_fill(const FillEvent& event) = 0;
     virtual void update_timeindex() = 0;
