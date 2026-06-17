@@ -46,4 +46,19 @@ public:
     void on_fill(const FillEvent& event) override;
     void update_timeindex() override;
 };
+
+
+class FixedFractionalPortfolio : public Portfolio {
+public:
+    FixedFractionalPortfolio(DataHandler* data,
+                            std::queue<std::unique_ptr<Event>>* events,
+                            double initial_cash,
+                            double risk_per_trade):
+    Portfolio(data, events, initial_cash), risk_per_trade_(risk_per_trade) {};
+    void on_signal(const SignalEvent& event) override;
+    void on_fill(const FillEvent& event) override;
+    void update_timeindex() override;
+private:
+    double risk_per_trade_;
+};
 #endif

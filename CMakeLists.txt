@@ -17,4 +17,8 @@ add_executable(backtester
         src/execution_handler.h
         src/engine.cpp
         src/engine.h
+        src/rsi.cpp
+        src/rsi.h
+        src/momentum.cpp
+        src/momentum.h
 )
