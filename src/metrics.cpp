@@ -46,3 +46,24 @@ double calculate_cagr(const std::vector<double> &equity_curve) {
     double years = equity_curve.size() / 252.0;
     return std::pow(equity_curve.back() / equity_curve.front(), 1.0 / years) - 1.0;
 }
+
+
+double calculate_winrate(const std::vector<Trade> &trades) {
+    if (trades.empty()) return 0;
+    int wins {0};
+    for (const auto& t : trades) {
+        if (t.pnl > 0) wins++;
+    }
+    return static_cast<double>(wins) / trades.size();
+}
+
+double calculate_profit_fact(const std::vector<Trade> &trades) {
+    double gross_profit {0.0};
+    double gross_loss {0.0};
+    for (const auto& t : trades) {
+        if (t.pnl>0) gross_profit+=t.pnl;
+        else gross_loss -= t.pnl;
+    }
+    if (gross_loss ==0) return 0.0;
+    return gross_profit/gross_loss;
+}

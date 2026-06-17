@@ -89,6 +89,9 @@ int main() {
     std::cout << "\nExported trades.csv and equity.csv\n";
     std::cout << "Trades: " << portfolio.get_trade_log().size() << "\n";
 
+    std::cout << "Win rate: " << calculate_winrate(portfolio.get_trade_log()) * 100 << "%\n";
+    std::cout << "Profit factor: " << calculate_profit_fact(portfolio.get_trade_log()) << "\n";
+
     delete strategy;
     return 0;
 }
