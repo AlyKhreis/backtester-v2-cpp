@@ -21,4 +21,6 @@ add_executable(backtester
         src/rsi.h
         src/momentum.cpp
         src/momentum.h
+        src/metrics.cpp
+        src/metrics.h
 )

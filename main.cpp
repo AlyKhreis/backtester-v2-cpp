@@ -9,6 +9,7 @@
 #include "engine.h"
 #include "rsi.h"
 #include "momentum.h"
+#include "metrics.h"
 
 int main() {
     std::queue<std::unique_ptr<Event>> events;
@@ -56,6 +57,10 @@ int main() {
     std::cout << "\nFinal equity: $" << curve.back() << "\n";
     std::cout << "Total return: " << (curve.back() / 100000.0 - 1.0) * 100 << "%\n";
     std::cout << "Bars: " << curve.size() << "\n";
+
+    std::cout << "Sharpe ratio: " << calculate_sharpe(curve) << "\n";
+    std::cout << "Max drawdown: " << calculate_max_drawdown(curve) << "%\n";
+    std::cout << "CAGR: " << calculate_cagr(curve) * 100 << "%\n";
 
     delete strategy;
     return 0;
