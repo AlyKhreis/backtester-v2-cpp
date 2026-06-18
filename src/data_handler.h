@@ -18,9 +18,13 @@ public:
 
     virtual bool has_more_data() const = 0;
 
+    virtual Bar get_current_bar(const std::string& symbol) const = 0;
+
     virtual ~DataHandler() = default;
+    void set_latency_bars(int n) { latency_bars_ = n; }
 protected:
     std::queue<std::unique_ptr<Event>> *events_;
+    int latency_bars_ {0};
 };
 
 class HistoricalCSVDataHandler : public DataHandler {
@@ -33,7 +37,7 @@ public:
     Bar get_latest_bar(const std::string& symbol) const override;
     std::vector<Bar> get_latest_bars(const std::string& symbol, int n) const override;
     bool has_more_data() const override;
-
+    Bar get_current_bar(const std::string& symbol) const override; 
 private:
     std::string symbol_;
     std::vector<Bar> all_bars_;     // entire dataset loaded once

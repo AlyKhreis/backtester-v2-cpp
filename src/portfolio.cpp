@@ -29,7 +29,7 @@ void NaivePortfolio::on_fill(const FillEvent& event) {
 
         Trade t;
         t.symbol = event.symbol;
-        t.entry_date = data_->get_latest_bar(event.symbol).date;
+        t.entry_date = data_->get_current_bar(event.symbol).date;
         t.entry_price = event.fill_price;
         t.quantity = event.quantity;
         t.total_commission = event.commission;
@@ -40,7 +40,7 @@ void NaivePortfolio::on_fill(const FillEvent& event) {
 
         if (open_trades_.count(event.symbol)) {
             Trade& t = open_trades_[event.symbol];
-            t.exit_date = data_->get_latest_bar(event.symbol).date;
+            t.exit_date = data_->get_current_bar(event.symbol).date;
             t.exit_price = event.fill_price;
             t.total_commission += event.commission;
             t.pnl = (t.exit_price - t.entry_price) * t.quantity - t.total_commission;
@@ -54,7 +54,7 @@ void NaivePortfolio::update_timeindex() {
     double equity = current_cash_;
     for (const auto &[symbol,shares]: positions_) {
         if (shares == 0)continue;
-        double price = data_->get_latest_bar(symbol).close;
+        double price = data_->get_current_bar(symbol).close;
         equity += shares * price;
     }
     equity_curve_.push_back(equity);
@@ -74,12 +74,12 @@ void FixedFractionalPortfolio::on_signal(const SignalEvent& event) {
         double equity = current_cash_;
         for (const auto& [symbol, shares] : positions_) {
             if (shares == 0) continue;
-            equity += shares * data_->get_latest_bar(symbol).close;
+            equity += shares * data_->get_current_bar(symbol).close;
         }
 
         // Size the position
         double target_dollars = equity * risk_per_trade_;
-        double price = data_->get_latest_bar(event.symbol).close;
+        double price = data_->get_current_bar(event.symbol).close;
         int quantity = static_cast<int>(target_dollars / price);
 
         if (quantity == 0) return;
@@ -103,7 +103,7 @@ void FixedFractionalPortfolio::on_fill(const FillEvent& event) {
 
         Trade t;
         t.symbol = event.symbol;
-        t.entry_date = data_->get_latest_bar(event.symbol).date;
+        t.entry_date = data_->get_current_bar(event.symbol).date;
         t.entry_price = event.fill_price;
         t.quantity = event.quantity;
         t.total_commission = event.commission;
@@ -114,7 +114,7 @@ void FixedFractionalPortfolio::on_fill(const FillEvent& event) {
 
         if (open_trades_.count(event.symbol)) {
             Trade& t = open_trades_[event.symbol];
-            t.exit_date = data_->get_latest_bar(event.symbol).date;
+            t.exit_date = data_->get_current_bar(event.symbol).date;
             t.exit_price = event.fill_price;
             t.total_commission += event.commission;
             t.pnl = (t.exit_price - t.entry_price) * t.quantity - t.total_commission;
@@ -128,7 +128,7 @@ void FixedFractionalPortfolio::update_timeindex() {
     double equity = current_cash_;
     for (const auto &[symbol,shares]: positions_) {
         if (shares == 0)continue;
-        double price = data_->get_latest_bar(symbol).close;
+        double price = data_->get_current_bar(symbol).close;
         equity += shares * price;
     }
     equity_curve_.push_back(equity);

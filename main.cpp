@@ -39,6 +39,11 @@ int main() {
         "/Users/aly/Desktop/CPPProjects/backtester-v2-cpp/data/AAPL.csv",
         "AAPL");
 
+    int latency;
+    std::cout << "Latency bars (0 = instant, 1 = 1-bar lag): ";
+    std::cin >> latency;
+    data.set_latency_bars(latency);
+
     std::cout << "Select Strategy:\n";
     std::cout << "1. Moving Average Crossover\n";
     std::cout << "2. RSI\n";

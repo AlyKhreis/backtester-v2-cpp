@@ -52,7 +52,9 @@ void HistoricalCSVDataHandler::update_bars() {
 }
 
 Bar HistoricalCSVDataHandler::get_latest_bar(const std::string& symbol) const {
-    return all_bars_[current_index_];
+    int idx = current_index_- latency_bars_;
+    if (idx<0) idx = 0;
+    return all_bars_[idx];
 }
 
 bool HistoricalCSVDataHandler::has_more_data() const{
@@ -60,7 +62,15 @@ bool HistoricalCSVDataHandler::has_more_data() const{
 }
 
 std::vector<Bar> HistoricalCSVDataHandler :: get_latest_bars(const std::string &symbol, int n) const {
-    int start_index = current_index_-n+1;
+    int idx = current_index_- latency_bars_;
+    if (idx<0) return {};
+    int start_index = idx-n+1;
     if (start_index < 0) start_index = 0;
-    return std::vector<Bar> (all_bars_.begin()+start_index, all_bars_.begin()+current_index_+1);
+    return std::vector<Bar> (all_bars_.begin()+start_index, all_bars_.begin()+idx+1);
+}
+
+
+
+Bar HistoricalCSVDataHandler::get_current_bar(const std::string& symbol) const {
+    return all_bars_[current_index_];   // no latency, true current bar
 }
