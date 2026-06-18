@@ -137,3 +137,19 @@ Profit factor: 1.24353
 - Live data + broker connector (Interactive Brokers / Alpaca) using the existing
   Strategy and Portfolio interfaces unchanged
 - Benchmark suite reporting events/sec and per-event latency percentiles
+
+
+### Latency sensitivity
+
+
+Re-running MA Crossover (20, 50) at increasing latency (in bars) demonstrates the
+Sharpe degradation expected when strategies act on stale data:
+
+| Latency | Total Return | Sharpe | Max DD  | Profit Factor |
+|---------|--------------|--------|---------|---------------|
+| 0       | 34.29%       | 0.4414 | -28.10% | 1.34          |
+| 1       | 34.61%       | 0.4352 | -28.43% | 1.35          |
+| 2       | 33.63%       | 0.4162 | -28.66% | 1.32          |
+
+The effect is small on daily bars but compounds significantly with tick-level data
+and faster-decay signals.
