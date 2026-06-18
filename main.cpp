@@ -11,7 +11,7 @@
 #include "momentum.h"
 #include "metrics.h"
 #include <fstream>
-
+#include <chrono>
 
 
 void export_trades_to_csv(const std::vector<Trade>& trades, const std::string& path) {
@@ -72,7 +72,14 @@ int main() {
 
     BacktestEngine engine(&data, strategy, &execution, &portfolio, &events);
 
+    auto start = std::chrono::high_resolution_clock::now();
     engine.run();
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    double events_per_sec = engine.get_event_count() / (duration_us / 1'000'000.0);
+
+
 
     const auto& curve = portfolio.get_equity_curve();
     std::cout << "\nFinal equity: $" << curve.back() << "\n";
@@ -92,6 +99,11 @@ int main() {
     std::cout << "Win rate: " << calculate_winrate(portfolio.get_trade_log()) * 100 << "%\n";
     std::cout << "Profit factor: " << calculate_profit_fact(portfolio.get_trade_log()) << "\n";
 
+
+    std::cout << "\nPerformance:\n";
+    std::cout << "  Events processed: " << engine.get_event_count() << "\n";
+    std::cout << "  Runtime: " << duration_us << " us\n";
+    std::cout << "  Throughput: " << events_per_sec << " events/sec\n";
     delete strategy;
     return 0;
 }

@@ -14,7 +14,7 @@ public:
     BacktestEngine(DataHandler *data, Strategy *strategy ,ExecutionHandler *execution, Portfolio *portfolio
         ,std::queue<std::unique_ptr<Event>> *events):
     data_(data), strategy_(strategy), execution_(execution), portfolio_(portfolio), events_(events) {}
-
+    int get_event_count() const { return event_count_; }
 
     void run();
 private:
@@ -24,6 +24,7 @@ private:
     Portfolio* portfolio_;
     ExecutionHandler* execution_;
     std::queue<std::unique_ptr<Event>>* events_;
+    int event_count_{0};
 };
 
 

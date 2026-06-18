@@ -2,6 +2,7 @@
 
 
 void BacktestEngine::process_event(Event &event) {
+    event_count_++;
     switch (event.type()) {
         case EventType:: MARKET:
             strategy_->calculate_signals(static_cast<MarketEvent&>(event));
